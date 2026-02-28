@@ -1,4 +1,3 @@
-from django.http import HttpResponse
 from django.shortcuts import render
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -8,14 +7,6 @@ from django.contrib.staticfiles import finders
 
 def home_view(request):
 	return render(request,'home.html')
-
-
-def about_view(request):
-	return render(request,'about.html')
-
-
-def contact_view(request):
-	return render(request,'contact.html')
 
 def animation_view(request):
 	if request.method == 'POST':

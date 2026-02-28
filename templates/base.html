@@ -10,35 +10,9 @@
   margin-right: auto;
   width: 50%;
 }
-#nav {
-  list-style-type: none;
-  margin-top:0;
-  padding: 0;
-  overflow: hidden;
-  background-color: #feda6a;
-}
 h2
 {
   color: #feda6a;
-}
-
-.li {
-  float: left;
-}
-
-.li a {
-  display: block;
-  color: #393f4d;
-  font-size: 20px;
-  font-weight: bold;
-  padding: 14px 16px;
-  text-decoration: none;
-}
-
-li a:hover {
-  background-color: #393f4d;
-  color: #feda6a;
-  font-weight: bold;
 }
 .form-style button{
 
@@ -215,13 +189,6 @@ body
 </div>
 <br>
 <body>
-<ul id="nav">
-  <li class="li"><a class="active" href="{% url 'home' %}">Home</a></li>
-  <li class="li"><a href="{% url 'animation' %}">Convertor</a></li>
-  <li class="li"><a href="{% url 'contact' %}">Contact</a></li>
-  <li class="li"><a href="{% url 'about' %}">About</a></li>
-</ul>
-
 <div class="wrapper" >
   {% block content %}
   {% endblock %}
