@@ -12,15 +12,17 @@
 			{% csrf_token %}
 			<div class="input-row">
 				<input type="text" name="sen" class="mytext" id="speechToText" placeholder="Type text or use voice capture" />
-				<button type="button" name="button" class="mic" onclick="record()" aria-label="Record speech">
+				<input type="file" id="audioInput" accept="audio/*" capture="microphone" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;" />
+				<label for="audioInput" class="mic" id="micButton" aria-label="Record speech" title="Tap to record or choose audio">
 					<img src="{% static 'mic3.png' %}" alt="Microphone" />
-				</button>
+				</label>
 			</div>
 			<input type="submit" name="submit" class="submit" value="Generate Signs" style="max-width: 220px;" />
 		</form>
 
 		<div style="margin-top:18px;">
 			<p class="muted"><strong style="color:#dbe5ff;">Input Text:</strong> {{ text|default:"No input yet" }}</p>
+			<p class="muted" id="transcriptionStatus" style="margin:8px 0 0;"></p>
 			<p class="muted" style="margin:12px 0 8px;"><strong style="color:#dbe5ff;">Detected Tokens:</strong></p>
 			<ul class="chips" id="list">
 				{% for word in words %}
@@ -47,17 +49,46 @@
 
 
 <script>
-	//webkitSpeechRecognition api for speech to text conversion
-	function record(){
-		var recognition = new webkitSpeechRecognition();
-		recognition.lang='en-IN';
-
-		recognition.onresult = function(event){
-			console.log(event)
-			document.getElementById('speechToText').value = event.results[0][0].transcript;
+	document.getElementById('audioInput').addEventListener('change', async function(event) {
+		const file = event.target.files && event.target.files[0];
+		if (!file) {
+			return;
 		}
-		recognition.start();
-	 }
+
+		const statusNode = document.getElementById('transcriptionStatus');
+		const micButton = document.getElementById('micButton');
+		statusNode.textContent = 'Audio captured. Transcribing...';
+		micButton.style.opacity = '0.7';
+
+		const formData = new FormData();
+		formData.append('audio', file);
+
+		try {
+			const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+			const response = await fetch("{% url 'transcribe' %}", {
+				method: 'POST',
+				headers: { 'X-CSRFToken': csrfToken },
+				body: formData
+			});
+
+			if (!response.ok) {
+				throw new Error('Transcription failed');
+			}
+
+			const payload = await response.json();
+			document.getElementById('speechToText').value = payload.text || '';
+			if (payload.detected_language) {
+				statusNode.textContent = 'Detected language: ' + payload.detected_language + '. Tap Generate Signs.';
+			} else {
+				statusNode.textContent = 'Transcription complete. Tap Generate Signs.';
+			}
+		} catch (error) {
+			statusNode.textContent = 'Could not transcribe audio. Ensure FFmpeg is installed on laptop and try again.';
+		} finally {
+			micButton.style.opacity = '1';
+			event.target.value = '';
+		}
+	});
 	function play()
 	{
 		var videoSource = new Array();

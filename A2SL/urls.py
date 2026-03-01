@@ -17,7 +17,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('manifest.webmanifest',views.manifest_view,name='manifest'),
+    path('service-worker.js',views.service_worker_view,name='service-worker'),
+    path('transcribe/',views.transcribe_audio_view,name='transcribe'),
     path('animation/',views.animation_view,name='animation'),
     path('',views.home_view,name='home'),
-    path('animation/',views.animation_view,name='animation')
 ]

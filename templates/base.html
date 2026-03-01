@@ -5,6 +5,10 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#101a36" />
+<link rel="manifest" href="{% url 'manifest' %}" />
+<link rel="icon" type="image/png" sizes="192x192" href="{% static 'pwa-192.png' %}" />
+<link rel="apple-touch-icon" sizes="180x180" href="{% static 'pwa-180.png' %}" />
 <title>SignFlow Interface</title>
 <style>
 :root {
@@ -63,6 +67,25 @@ body {
   border: 1px solid #3c5db0;
   border-radius: 999px;
   padding: 7px 12px;
+}
+
+.install-btn {
+  padding: 8px 12px;
+  border: 1px solid #5d78c4;
+  border-radius: 10px;
+  background: #152a59;
+  color: #dce6ff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.install-btn[hidden] {
+  display: none;
+}
+
+.install-hint {
+  color: var(--ink-muted);
+  font-size: 0.8rem;
 }
 
 .content {
@@ -211,7 +234,11 @@ body {
 <div class="shell">
   <header class="topbar">
     <h1 class="brand">GestureStream Console</h1>
-    <span class="tag">Speech ↔ Sign Workflow</span>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button id="installPwaButton" class="install-btn" type="button" hidden>Install App</button>
+      <span id="installHint" class="install-hint"></span>
+      <span class="tag">Speech ↔ Sign Workflow</span>
+    </div>
   </header>
 
   <main class="content">
@@ -219,5 +246,56 @@ body {
     {% endblock %}
   </main>
 </div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register("{% url 'service-worker' %}").catch(function(error) {
+      console.log('Service worker registration failed', error);
+    });
+  });
+}
+
+let deferredInstallPrompt = null;
+const installButton = document.getElementById('installPwaButton');
+const installHint = document.getElementById('installHint');
+
+function setInstallHint(message) {
+  installHint.textContent = message;
+}
+
+if (!window.isSecureContext) {
+  setInstallHint('Install requires HTTPS. Open this app on a secure URL.');
+} else {
+  setInstallHint('');
+}
+
+window.addEventListener('beforeinstallprompt', function(event) {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  installButton.hidden = false;
+  setInstallHint('App is installable.');
+});
+
+installButton.addEventListener('click', async function() {
+  if (!deferredInstallPrompt) {
+    return;
+  }
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+  installButton.hidden = true;
+});
+
+window.addEventListener('appinstalled', function() {
+  installButton.hidden = true;
+  setInstallHint('App installed.');
+});
+
+window.addEventListener('load', function() {
+  if (window.isSecureContext && !deferredInstallPrompt && !window.matchMedia('(display-mode: standalone)').matches) {
+    setInstallHint('Install prompt not available yet. Use Chrome/Edge on HTTPS and interact with the site briefly.');
+  }
+});
+</script>
 </body>
 </html>
