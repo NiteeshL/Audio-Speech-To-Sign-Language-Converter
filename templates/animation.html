@@ -3,51 +3,47 @@
 
 
 {% block content %}
-<div class="split left">
-	<h2 align="center">Enter Text or Use Mic</h2>
-	<br>
-		<form action="" method="post" align="left">
-		{% csrf_token %}
-					<input type="text" name="sen" class="mytext" id="speechToText" placeholder="">
-					<button type="button" name="button" class="mic" onclick="record()"><img src="{% static 'mic3.png' %}" height="32px" width="38px" /></button>
-		  			&nbsp&nbsp&nbsp&nbsp
-		  			<input type="submit" name="submit" class="submit">
+<section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;">
+	<article class="card">
+		<h2 class="headline" style="font-size:1.45rem;">Input Console</h2>
+		<p class="muted" style="margin-bottom:14px;">Type a sentence or capture voice from your microphone.</p>
 
+		<form action="" method="post" class="form-stack">
+			{% csrf_token %}
+			<div class="input-row">
+				<input type="text" name="sen" class="mytext" id="speechToText" placeholder="Type text or use voice capture" />
+				<button type="button" name="button" class="mic" onclick="record()" aria-label="Record speech">
+					<img src="{% static 'mic3.png' %}" alt="Microphone" />
+				</button>
+			</div>
+			<input type="submit" name="submit" class="submit" value="Generate Signs" style="max-width: 220px;" />
 		</form>
-		<br>
-		<table cellspacing="20px">
-			<tr>
-				<td class="td">The text that you entered is:</td>
-				<td class="td">{{ text }}</td>
-			</tr>
-			<tr>
-				<td class="td">Key words in sentence:</td>
-				<td class="td">
-				<ul class="td" id="list" align="center">
-  					{% for word in words %}
-    				<li id="{{ i }}" style="margin-right: 8px">{{ word }}</li>
-  					{% endfor %}
-				</ul>
-			</td>
-		</tr>
-	</table></div>
-  <div class="split right">
-  <h2 align="center">Sign Language Animation</h2>
 
-	<div style="text-align:center">	&nbsp&nbsp
-  	<button class="submit" onclick="playPause()">Play/Pause</button>
-  	<!--  LETS USE ONLY PLAY PAUSE BUTTON WITH 720 *420 ,IT FITS THE SCREEN ASHISH
+		<div style="margin-top:18px;">
+			<p class="muted"><strong style="color:#dbe5ff;">Input Text:</strong> {{ text|default:"No input yet" }}</p>
+			<p class="muted" style="margin:12px 0 8px;"><strong style="color:#dbe5ff;">Detected Tokens:</strong></p>
+			<ul class="chips" id="list">
+				{% for word in words %}
+				<li id="{{ i }}">{{ word }}</li>
+				{% empty %}
+				<li>No tokenized words yet.</li>
+				{% endfor %}
+			</ul>
+		</div>
+	</article>
 
-  	<button onclick="makeBig()">Big</button>
-  	<button onclick="makeSmall()">Small</button>
-  	<button onclick="makeNormal()">Normal</button>-->
-
-
-  	<video id="videoPlayer" width="600" height="350"  preload="auto" autoplay>
-    	<source src="" type="video/mp4">
-    Your browser does not support HTML5 video.
-  	</video>
-  	</div></div>
+	<article class="card">
+		<h2 class="headline" style="font-size:1.45rem;">Playback Deck</h2>
+		<p class="muted" style="margin-bottom:12px;">Run the playlist to animate each token in sequence.</p>
+		<button class="submit" onclick="playPause()" style="margin-bottom:14px;">Play / Pause Sequence</button>
+		<div class="video-wrap">
+			<video id="videoPlayer" preload="auto" autoplay>
+				<source src="" type="video/mp4">
+				Your browser does not support HTML5 video.
+			</video>
+		</div>
+	</article>
+</section>
 
 
 <script>
@@ -66,6 +62,9 @@
 	{
 		var videoSource = new Array();
 		var	videos = document.getElementById("list").getElementsByTagName("li");
+		if (videos.length === 0 || videos[0].innerHTML === "No tokenized words yet.") {
+			return;
+		}
 		var j;
 		for(j=0;j<videos.length;j++)
 		{
@@ -77,23 +76,20 @@
 
 		function videoPlay(videoNum)
 		{
-			document.getElementById("list").getElementsByTagName("li")[videoNum].style.color = "#09edc7";
-			document.getElementById("list").getElementsByTagName("li")[videoNum].style.fontSize = "xx-large";
+			document.getElementById("list").getElementsByTagName("li")[videoNum].classList.add("active");
 			document.getElementById("videoPlayer").setAttribute("src", videoSource[videoNum]);
 	    	document.getElementById("videoPlayer").load();
 	    	document.getElementById("videoPlayer").play();
 
 		}
-		document.getElementById('videoPlayer').addEventListener('ended', myHandler, false);
-		document.getElementById("list").getElementsByTagName("li")[0].style.color = "#09edc7";
-		document.getElementById("list").getElementsByTagName("li")[0].style.fontSize = "xx-large";
+		document.getElementById('videoPlayer').onended = myHandler;
+		document.getElementById("list").getElementsByTagName("li")[0].classList.add("active");
 
 		videoPlay(0); // play the video
 
 		function myHandler()
 		{
-	 		document.getElementById("list").getElementsByTagName("li")[i].style.color = "#feda6a";
-			document.getElementById("list").getElementsByTagName("li")[i].style.fontSize = "20px";
+	 		document.getElementById("list").getElementsByTagName("li")[i].classList.remove("active");
 			i++;
 	    	if (i == videoCount)
 	    	{

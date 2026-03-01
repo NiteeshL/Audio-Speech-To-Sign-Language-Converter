@@ -3,11 +3,23 @@
 
 
 {% block content %}
-<video width="500" height="380" class="center" autoplay loop>
-  <source src= "{% static 'Hello.mp4' %}" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
-	<div class="form-style" align="middle" >
-	<a href="{% url 'animation' %}"><button class="button">Click to Start</button></a>
+<section class="card" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;align-items:center;">
+	<div>
+		<h2 class="headline">Turn Voice Into Sign Sequences</h2>
+		<p class="muted" style="margin-bottom:18px;">
+			Capture speech or type a sentence, then watch the corresponding sign animation playlist.
+			This workspace is optimized for quick practice and classroom demos.
+		</p>
+		<a href="{% url 'animation' %}">
+			<button class="button-primary" style="min-width:220px;">Open Translation Workspace</button>
+		</a>
 	</div>
+
+	<div class="video-wrap">
+		<video autoplay loop muted playsinline>
+			<source src="{% static 'Hello.mp4' %}" type="video/mp4">
+			Your browser does not support the video tag.
+		</video>
+	</div>
+</section>
 {% endblock %}

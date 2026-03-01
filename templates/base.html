@@ -1,199 +1,223 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SignFlow Interface</title>
 <style>
-.center {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  width: 50%;
-}
-h2
-{
-  color: #feda6a;
-}
-.form-style button{
-
-  width: 89%;
-	height:70%;
-	padding: 5%;
-	background: #feda6a;
-	border-bottom: 2px solid #393f4d;;
-	border-top-style: none;
-	border-right-style: none;
-	border-left-style: none;
-	color: #393f4d;
-  font-weight: bold;
-  font-size: 28px;
-  font-family: "Times New Roman";
+:root {
+  --bg-1: #070b1a;
+  --bg-2: #101a36;
+  --panel: #121f3f;
+  --panel-soft: #17274d;
+  --ink: #e6ecff;
+  --ink-muted: #a6b3dc;
+  --accent: #57e6ff;
+  --accent-2: #8f7bff;
+  --danger: #ff5c90;
+  --radius: 18px;
 }
 
-.form-style button:hover {
-  background-color: #393f4d;
-  color: #feda6a;
-  font-weight: bold;
-}
-.split {
-  height: 100%;
-  width: 50%;
-  position: fixed;
-  z-index: 1;
-  top: 50;
-  overflow-x: hidden;
-  padding-top: 20px;
-
+* {
+  box-sizing: border-box;
 }
 
-.left {
-  left: 15;
-  border-right: 0px #feda6a solid;
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--ink);
+  background: radial-gradient(circle at 15% 10%, #1a2f63 0%, var(--bg-1) 35%),
+              linear-gradient(150deg, var(--bg-1), var(--bg-2));
 }
 
-.right {
-  right: 0;
-  border-left: 1px #feda6a solid;
+.shell {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px 22px 40px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  border: 1px solid #2a3f77;
+  border-radius: var(--radius);
+  background: rgba(16, 29, 61, 0.88);
+  backdrop-filter: blur(8px);
+}
+
+.brand {
+  margin: 0;
+  font-size: clamp(1.25rem, 1.4vw + 0.9rem, 1.9rem);
+  letter-spacing: 0.03em;
+}
+
+.tag {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  border: 1px solid #3c5db0;
+  border-radius: 999px;
+  padding: 7px 12px;
+}
+
+.content {
+  margin-top: 22px;
+}
+
+.card {
+  background: linear-gradient(160deg, rgba(22, 37, 73, 0.95), rgba(16, 28, 56, 0.95));
+  border: 1px solid #2e447c;
+  border-radius: var(--radius);
+  padding: 22px;
+}
+
+.headline {
+  margin: 0 0 10px;
+  font-size: clamp(1.4rem, 1.4vw + 1rem, 2.3rem);
+}
+
+.muted {
+  margin: 0;
+  color: var(--ink-muted);
+  line-height: 1.55;
+}
+
+.button-primary,
+.submit,
+.mic {
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.button-primary,
+.submit {
+  padding: 13px 18px;
+  color: #06132f;
+  background: linear-gradient(135deg, var(--accent), #67ffd4);
+}
+
+.button-primary:hover,
+.submit:hover,
+.mic:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
+
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.input-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .mytext {
-    border:1px solid #393f4d;
-    border-right:none;
-    padding:4px;
-    margin:0px;
-    float:left;
-    height:32px;
-    overflow:hidden;
-    line-height:16px;
-    width: 300px;
-    margin-left: 54px;
+  flex: 1 1 320px;
+  min-height: 46px;
+  border: 1px solid #3a548f;
+  border-radius: 12px;
+  padding: 11px 14px;
+  font-size: 1rem;
+  background: #0e1a39;
+  color: var(--ink);
+}
+
+.mytext:focus {
+  outline: 2px solid rgba(87, 230, 255, 0.4);
+  border-color: var(--accent);
+}
+
+.mic {
+  min-height: 46px;
+  min-width: 56px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--accent-2), #6d66ff);
+}
+
+.mic img {
+  width: 26px;
+  height: 26px;
+}
+
+.chips {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chips li {
+  border: 1px solid #4160b0;
+  background: #102148;
+  color: var(--ink-muted);
+  padding: 7px 11px;
+  border-radius: 999px;
+  font-size: 0.9rem;
+}
+
+.chips li.active {
+  border-color: #75ffee;
+  background: #123f54;
+  color: #b4fff8;
+}
+
+.video-wrap {
+  border: 1px solid #324a84;
+  border-radius: 14px;
+  background: #040917;
+  overflow: hidden;
+}
+
+.video-wrap video {
+  width: 100%;
+  display: block;
+}
+
+#videoPlayer {
+  width: 100%;
+  height: auto;
+  min-height: 280px;
+  display: block;
+}
+
+@media (max-width: 700px) {
+  .shell {
+    padding: 18px 14px 30px;
   }
 
-  .mic {
-      border:1px solid #393f4d;
-      background:#feda6a;
-      vertical-align:top;
-      padding:0px;
-      margin:0;
-      float:left;
-      height:42px;
-      overflow:hidden;
-      width:5em;
-      text-align:center;
-      line-height:16px;
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
   }
-  
-
-.submit {
-    border:1px solid #393f4d;
-    height: 42px;
-    width: 160px;
-    text-align: center;
-    background-color: #feda6a;
-    color: #393f4d;
-    font-weight: bold;
-    font-size: 24px;
-    font-family: "Times New Roman";
-    vertical-align:top;
-}
-.submit:hover {
-  background-color: #393f4d;
-  color: #feda6a;
-  font-weight: bold;
-}
-.td {
-  color: #feda6a;
-  font-weight: bold;
-  font-size: 20px;
-}
-
-body
-{
-  background-color: #404040
-}
-
-.form-style{
-	font: 95% Arial, Helvetica, sans-serif;
-	max-width: 400px;
-	margin: 10px auto;
-	padding: 16px;
-
-}
-.form-style h1, .form-style a{
-	padding: 20px 0;
-  font-size: 24px;
-	font-weight: bold;
-  font-family: "Times New Roman";
-	text-align: center;
-	margin: -16px -16px 16px -16px;
-  color:#feda6a
-}
-.form-style input[type="text"],
-.form-style input[type="password"],
-.form-style input[type="date"],
-.form-style input[type="datetime"],
-.form-style input[type="email"],
-.form-style input[type="number"],
-.form-style input[type="search"],
-.form-style input[type="time"],
-.form-style input[type="url"],
-.form-style textarea,
-.form-style select
-{
-	-webkit-transition: all 0.30s ease-in-out;
-	-moz-transition: all 0.30s ease-in-out;
-	-ms-transition: all 0.30s ease-in-out;
-	-o-transition: all 0.30s ease-in-out;
-	outline: none;
-	box-sizing: border-box;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	width: 100%;
-	background: #fff;
-	margin-bottom: 4%;
-	border: 1px solid #ccc;
-	padding: 3%;
-	color:#0000a0 ;
-	font: 95% Arial, Helvetica, sans-serif;
-}
-.form-style input[type="text"]:focus,
-.form-style input[type="password"]:focus,
-.form-style input[type="date"]:focus,
-.form-style input[type="datetime"]:focus,
-.form-style input[type="email"]:focus,
-.form-style input[type="number"]:focus,
-.form-style input[type="search"]:focus,
-.form-style input[type="time"]:focus,
-.form-style input[type="url"]:focus,
-.form-style textarea:focus,
-.form-style select:focus
-{
-	box-shadow: 0 0 5px #0000a0;
-	padding: 3%;
-	border: 1px solid #0000a0;
-}
-
-.site-form span,label{
-  color: #feda6a;
-}
-.errorlist{
-    color: red;
-    font-weight: bold;
 }
 </style>
-<title>Homepage</title>
 </head>
-<div style="background-color:#404040;color:#feda6a;padding:10 10 1 10;border: 1px #feda6a groove;margin-bottom:0;">
-
-<h1 align=center>Audio To Sign Language Tool</h1>
-</div>
-<br>
 <body>
-<div class="wrapper" >
-  {% block content %}
-  {% endblock %}
+<div class="shell">
+  <header class="topbar">
+    <h1 class="brand">GestureStream Console</h1>
+    <span class="tag">Speech ↔ Sign Workflow</span>
+  </header>
+
+  <main class="content">
+    {% block content %}
+    {% endblock %}
+  </main>
 </div>
-
-
 </body>
 </html>
