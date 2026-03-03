@@ -249,7 +249,9 @@ body {
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register("{% url 'service-worker' %}").catch(function(error) {
+    navigator.serviceWorker.register("{% url 'service-worker' %}").then(function(registration) {
+      registration.update();
+    }).catch(function(error) {
       console.log('Service worker registration failed', error);
     });
   });

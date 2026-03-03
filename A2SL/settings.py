@@ -20,6 +20,8 @@ NLTK_DATA_DIR = os.path.join(BASE_DIR, 'nltk_data')
 nltk.data.path.append(NLTK_DATA_DIR)
 # download nltk utilities
 nltk.download('averaged_perceptron_tagger')
+nltk.download('averaged_perceptron_tagger_eng')
+nltk.download('punkt')
 nltk.download('wordnet')
 nltk.download('omw-1.4')
 

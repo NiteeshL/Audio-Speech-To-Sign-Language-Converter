@@ -1,28 +1,10 @@
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
-from django.views.decorators.http import require_POST
+from django.http import HttpResponse
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import nltk
 from django.contrib.staticfiles import finders
-import os
-import tempfile
-
-try:
-	from faster_whisper import WhisperModel
-except Exception:
-	WhisperModel = None
-
-
-WHISPER_MODEL = None
-
-
-def _get_whisper_model():
-	global WHISPER_MODEL
-	if WHISPER_MODEL is None:
-		WHISPER_MODEL = WhisperModel("small", device="cpu", compute_type="int8")
-	return WHISPER_MODEL
 
 def home_view(request):
 	return render(request,'home.html')
@@ -65,11 +47,8 @@ def manifest_view(request):
 
 def service_worker_view(request):
 	service_worker = """
-const CACHE_NAME = 'gesturestream-v1';
+const CACHE_NAME = 'gesturestream-v2';
 const ASSETS_TO_CACHE = [
-	'/',
-	'/animation/',
-	'/manifest.webmanifest',
 	'/static/pwa-192.png',
 	'/static/pwa-512.png',
 	'/static/pwa-180.png',
@@ -94,6 +73,11 @@ self.addEventListener('fetch', (event) => {
 	if (event.request.method !== 'GET') {
 		return;
 	}
+
+	if (event.request.mode === 'navigate' || (event.request.headers.get('accept') || '').includes('text/html')) {
+		return;
+	}
+
 	event.respondWith(
 		caches.match(event.request).then((cached) => cached || fetch(event.request))
 	);
@@ -103,42 +87,6 @@ self.addEventListener('fetch', (event) => {
 	response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
 	return response
 
-
-@require_POST
-def transcribe_audio_view(request):
-	if WhisperModel is None:
-		return JsonResponse({'error': 'Whisper dependency is not installed.'}, status=500)
-
-	audio_file = request.FILES.get('audio')
-	if not audio_file:
-		return JsonResponse({'error': 'Audio file is required.'}, status=400)
-
-	_, extension = os.path.splitext(audio_file.name or '')
-	if not extension:
-		extension = '.webm'
-
-	temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=extension)
-	try:
-		for chunk in audio_file.chunks():
-			temp_file.write(chunk)
-		temp_file.flush()
-		temp_file.close()
-
-		model = _get_whisper_model()
-		segments, info = model.transcribe(temp_file.name, beam_size=5, vad_filter=True)
-		transcribed_text = " ".join(segment.text.strip() for segment in segments).strip()
-
-		return JsonResponse({
-			'text': transcribed_text,
-			'detected_language': getattr(info, 'language', 'unknown'),
-			'language_probability': getattr(info, 'language_probability', 0),
-		})
-	except Exception:
-		return JsonResponse({'error': 'Unable to transcribe audio.'}, status=500)
-	finally:
-		if os.path.exists(temp_file.name):
-			os.remove(temp_file.name)
-
 def animation_view(request):
 	if request.method == 'POST':
 		text = request.POST.get('sen')
@@ -146,6 +94,7 @@ def animation_view(request):
 		text.lower()
 		#tokenizing the sentence
 		words = word_tokenize(text)
+		words = [word for word in words if any(char.isalnum() for char in word)]
 
 		tagged = nltk.pos_tag(words)
 		tense = {}
@@ -173,35 +122,6 @@ def animation_view(request):
 
 				else:
 					filtered_text.append(lr.lemmatize(w))
-
-
-		#adding the specific word to specify tense
-		words = filtered_text
-		temp=[]
-		for w in words:
-			if w=='I':
-				temp.append('Me')
-			else:
-				temp.append(w)
-		words = temp
-		probable_tense = max(tense,key=tense.get)
-
-		if probable_tense == "past" and tense["past"]>=1:
-			temp = ["Before"]
-			temp = temp + words
-			words = temp
-		elif probable_tense == "future" and tense["future"]>=1:
-			if "Will" not in words:
-					temp = ["Will"]
-					temp = temp + words
-					words = temp
-			else:
-				pass
-		elif probable_tense == "present":
-			if tense["present_continuous"]>=1:
-				temp = ["Now"]
-				temp = temp + words
-				words = temp
 
 
 		filtered_text = []
