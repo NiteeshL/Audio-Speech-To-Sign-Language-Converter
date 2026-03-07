@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="theme-color" content="#101a36" />
 <link rel="manifest" href="{% url 'manifest' %}" />
-<link rel="icon" type="image/png" sizes="192x192" href="{% static 'pwa-192.png' %}" />
-<link rel="apple-touch-icon" sizes="180x180" href="{% static 'pwa-180.png' %}" />
-<title>SignFlow Interface</title>
+<link rel="icon" type="image/jpeg" href="{% static 'logo.jpg' %}" />
+<link rel="apple-touch-icon" href="{% static 'logo.jpg' %}" />
+<title>சைகை</title>
 <style>
 :root {
   --bg-1: #070b1a;
@@ -56,9 +56,20 @@ body {
 }
 
 .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin: 0;
   font-size: clamp(1.25rem, 1.4vw + 0.9rem, 1.9rem);
   letter-spacing: 0.03em;
+}
+
+.brand-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
 .tag {
@@ -223,6 +234,12 @@ body {
     padding: 18px 14px 30px;
   }
 
+  .brand-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+  }
+
   .topbar {
     flex-direction: column;
     align-items: flex-start;
@@ -233,7 +250,10 @@ body {
 <body>
 <div class="shell">
   <header class="topbar">
-    <h1 class="brand">GestureStream Console</h1>
+    <h1 class="brand">
+      <img src="{% static 'logo.jpg' %}" alt="சைகை logo" class="brand-logo" />
+      <span>சைகை</span>
+    </h1>
     <div style="display:flex;gap:8px;align-items:center;">
       <button id="installPwaButton" class="install-btn" type="button" hidden>Install App</button>
       <span id="installHint" class="install-hint"></span>

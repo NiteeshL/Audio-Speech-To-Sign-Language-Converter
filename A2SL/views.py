@@ -14,8 +14,8 @@ def manifest_view(request):
 	manifest_content = """
 {
 	"id": "/",
-	"name": "GestureStream Console",
-	"short_name": "GestureStream",
+	"name": "சைகை",
+	"short_name": "சைகை",
 	"description": "Multilingual speech to sign animation workspace",
 	"start_url": "/",
 	"scope": "/",
@@ -26,16 +26,22 @@ def manifest_view(request):
 	"lang": "en-US",
 	"icons": [
 		{
-			"src": "/static/pwa-192.png",
+			"src": "/static/logo.jpg",
 			"sizes": "192x192",
-			"type": "image/png",
-			"purpose": "any maskable"
+			"type": "image/jpeg",
+			"purpose": "any"
 		},
 		{
-			"src": "/static/pwa-512.png",
+			"src": "/static/logo.jpg",
 			"sizes": "512x512",
-			"type": "image/png",
-			"purpose": "any maskable"
+			"type": "image/jpeg",
+			"purpose": "any"
+		},
+		{
+			"src": "/static/logo.jpg",
+			"sizes": "180x180",
+			"type": "image/jpeg",
+			"purpose": "any"
 		}
 	]
 }
@@ -49,9 +55,7 @@ def service_worker_view(request):
 	service_worker = """
 const CACHE_NAME = 'gesturestream-v2';
 const ASSETS_TO_CACHE = [
-	'/static/pwa-192.png',
-	'/static/pwa-512.png',
-	'/static/pwa-180.png',
+	'/static/logo.jpg',
 	'/static/mic3.png'
 ];
 
